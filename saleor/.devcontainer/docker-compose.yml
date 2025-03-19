@@ -1,0 +1,65 @@
+version: "3.4"
+
+services:
+  primepod:
+    image: primepod
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: uvicorn saleor.asgi:application --reload --host 0.0.0.0 --port 8000
+    env_file:
+      - common.env
+      - backend.env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ..:/app
+    ports:
+      - 8000:8000
+
+  dashboard:
+    image: ghcr.io/saleor/saleor-dashboard:3.20.5
+    restart: unless-stopped
+    ports:
+      - 9000:80
+
+  db:
+    image: library/postgres:15-alpine
+    ports:
+     - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - saleor-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=primepod
+      - POSTGRES_PASSWORD=primepod
+
+  redis:
+    image: library/redis:7.0-alpine
+    restart: unless-stopped
+    volumes:
+      - saleor-redis:/data
+    ports:
+      - 6379:6379
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - 1025:1025 # SMTP Server
+      - 8025:8025 # Mailpit UI
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+volumes:
+  saleor-db:
+    driver: local
+  saleor-redis:
+    driver: local
