@@ -176,25 +176,27 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       sourcemap,
-      minify: false,
+      minify: 'terser',
       emptyOutDir: true,
-      outDir: "../build/dashboard",
+      outDir: "build/dashboard",
       assetsDir: ".",
       commonjsOptions: {
-        /*
-          Fix dynamic imports by "require", Necessary for react-editor-js
-          Ref: https://github.com/Jungwoo-An/react-editor-js/blob/e58b7ba5e66d07912bb78f65ac911e4018d363e1/packages/react-editor-js/src/factory.ts#L5
-         */
         transformMixedEsModules: true,
       },
       rollupOptions: {
         plugins: [nodePolyfills()],
-        maxParallelFileOps: 2,
-        cache: false,
+        maxParallelFileOps: 4,
+        cache: true,
         output: {
           sourcemap,
           manualChunks: id => {
             if (id.includes("node_modules")) {
+              if (id.includes("react") || id.includes("react-dom")) {
+                return "vendor-react";
+              }
+              if (id.includes("@apollo") || id.includes("graphql")) {
+                return "vendor-graphql";
+              }
               return "vendor";
             }
           },
