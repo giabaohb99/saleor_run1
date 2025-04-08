@@ -31,6 +31,8 @@ Lệnh này sẽ khởi động các container sau:
 
 ### 2. Cài đặt dependencies và chuẩn bị database
 
+
+
 ```bash
 # Cài đặt các dependency Python
 docker-compose -f .devcontainer/docker-compose.yml exec primepod poetry install
