@@ -18,11 +18,11 @@ services:
     ports:
       - 8000:8000
 
-  dashboard:
-    image: ghcr.io/saleor/saleor-dashboard:3.20.5
-    restart: unless-stopped
-    ports:
-      - 9000:80
+  # dashboard:
+  #   image: ghcr.io/saleor/saleor-dashboard:3.20.5
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9000:80
 
   db:
     image: library/postgres:15-alpine
@@ -34,6 +34,7 @@ services:
     environment:
       - POSTGRES_USER=primepod
       - POSTGRES_PASSWORD=primepod
+      - POSTGRES_DB=primepod
 
   redis:
     image: library/redis:7.0-alpine
